@@ -1,35 +1,27 @@
 class Solution {
 public:
-   int partition(vector<int>& nums, int l, int h) {
-        int pivot = nums[l];
-        int i = l - 1;
-        int j = h + 1;
-
-        while (true) {
-            do {
-                i++;
-            } while (nums[i] < pivot);
-
-            do {
-                j--;
-            } while (nums[j] > pivot);
-
-            if (i >= j)
-                return j;
-
-            swap(nums[i], nums[j]);
-        }
-    }
-
-    void quicksort(vector<int>& nums, int l, int h) {
-        if (l < h) {
-            int p = partition(nums, l, h);
-            quicksort(nums, l, p);
-            quicksort(nums, p + 1, h);
-        }
-    }
     vector<int> sortArray(vector<int>& nums) {
-        quicksort(nums,0,nums.size()-1);
-    return nums;
+        function<void(int,int)> quicksort = [&](int left, int right) {
+            if (left >= right) return;
+
+            int pivot = nums[left + (right - left) / 2];
+            int i = left, j = right;
+
+            while (i <= j) {
+                while (nums[i] < pivot) i++;
+                while (nums[j] > pivot) j--;
+                if (i <= j) {
+                    swap(nums[i], nums[j]);
+                    i++;
+                    j--;
+                }
+            }
+
+            if (left < j) quicksort(left, j);
+            if (i < right) quicksort(i, right);
+        };
+
+        quicksort(0, nums.size() - 1);
+        return nums;
     }
 };
