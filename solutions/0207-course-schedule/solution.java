@@ -1,35 +1,36 @@
 class Solution {
     public boolean canFinish(int numCourses, int[][] prerequisites) {
-        HashMap<Integer,Queue<Integer>> map = new HashMap<>();
-        HashSet<Integer> set;
-        for(int i = 0;i<prerequisites.length;i++){
-            int[] p = prerequisites[i];
-            Queue<Integer> l = map.getOrDefault(p[0],new PriorityQueue<>());
-            l.add(p[1]);
-            map.put(p[0],l);
-        }
 
-        for(Integer key:map.keySet()){
-                set = new HashSet<>();
-                set.add(key);
-                if(!dfs(map,set,map.get(key))) return false;
+        List<List<Integer>> list = new ArrayList<>();
+        int[] visited = new int[numCourses];
+
+        for(int i  = 0;i<numCourses;i++){
+            list.add(new ArrayList<>());
+        }
+        for(int i =0;i<prerequisites.length;i++)
+        {
+            int p[] = prerequisites[i];
+            list.get(p[0]).add(p[1]);
+        }
+        for(int i =0;i<numCourses;i++){
+           if(!dfs(visited,list,i)) return false;
         }
         return true;
     }
 
-    public boolean dfs(HashMap<Integer,Queue<Integer>> map, HashSet<Integer> set,Queue<Integer> pr){
-        while(!pr.isEmpty()){
-            HashSet<Integer> setC = new HashSet<>(set);
-            int r = pr.poll();
-            if(setC.contains(r)){
-                return false;
-            }else{
-                setC.add(r);
-            }
-            if(map.containsKey(r)){
-                if(!dfs(map,setC,map.get(r))) return false;
-            }
-        }
+  public boolean dfs(int [] visited,List<List<Integer>> list,int i){
+    if(visited[i] == 1) return false;
+    if(visited[i] == 2) return true;
+    visited[i] = 1;
+    List<Integer> requirements = list.get(i);
+    int n = requirements.size();
+    if(requirements ==  null){
         return true;
     }
+    for(int j = 0;j<n;j++){
+        if(!dfs(visited,list,requirements.get(j))) return false;
+    }
+    visited[i] = 2;
+    return true;
+  }
 }
